@@ -5,12 +5,13 @@ import java.io.FilenameFilter;
 
 import org.json.JSONObject;
 
+import com.dk.account.LoginActivity;
 import com.dk.util.network.ApiCallListener;
 import com.dk.util.network.ApiUploadListener;
 import com.dk.util.network.Download;
 import com.dk.util.network.DownloadListener;
 import com.dk.util.network.DownloadResult;
-import com.dk.util.network.Login;
+import com.dk.util.network.dKLogin;
 import com.dk.util.network.LoginListener;
 import com.dk.util.network.Request;
 import com.dk.util.network.RequestListener;
@@ -28,6 +29,7 @@ import android.app.Fragment;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
@@ -157,6 +159,9 @@ public class MainActivity extends Activity {
 			Button bnt7 = (Button)rootView.findViewById(R.id.button7);
 			bnt7.setOnClickListener(this);
 			
+			Button bnt8 = (Button)rootView.findViewById(R.id.button8);
+			bnt8.setOnClickListener(this);
+			
 			return rootView;
 		}
 		private void loadFileList() {
@@ -263,7 +268,7 @@ public class MainActivity extends Activity {
 				nm.notify(notifyId3, builder3.build());
 			}else if (v.getId() == R.id.button4) {
 				Log.d("TEST", "login start");
-				Login l = new Login(this.getActivity(), "Andyh", "hallodu");
+				dKLogin l = new dKLogin(this.getActivity(), "Andyh", "hallodu");
 				l.setListener(this);
 				l.login();
 				nm.notify(notifyId4, builder4.build());
@@ -291,6 +296,17 @@ public class MainActivity extends Activity {
 				}else{
 					Log.d("TEST", "erst einloggen");
 				}
+			}else if (v.getId() == R.id.button8) {
+				Intent intent = new Intent(getActivity(), com.dk.account.LoginActivity.class);
+				startActivityForResult(intent, 90);
+			}
+		}
+		
+		@Override
+		public void onActivityResult(int requestCode, int resultCode, Intent data){
+			if(resultCode == RESULT_OK){
+				Log.d("OK", "USERNAME:" + data.getStringExtra(LoginActivity.DK_USERNAME));
+				Log.d("OK", "PASSWORD:" + data.getStringExtra(LoginActivity.DK_PASSWORD));
 			}
 		}
 

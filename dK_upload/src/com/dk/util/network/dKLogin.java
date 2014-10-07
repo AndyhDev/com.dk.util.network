@@ -3,12 +3,12 @@ package com.dk.util.network;
 import android.app.Activity;
 
 
-public class Login implements RequestListener{
+public class dKLogin implements RequestListener{
 	private Request request;
 	private String url;
 	private LoginListener listener;
 	
-	public Login(Activity activity, String userName, String passw) {
+	public dKLogin(Activity activity, String userName, String passw) {
 		url = "https://dk-force.de/api/login.php";
 		request = new Request(activity, url);
 		request.addParam("user", userName);
