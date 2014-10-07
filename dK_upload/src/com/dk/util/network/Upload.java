@@ -1,21 +1,21 @@
 package com.dk.util.network;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.BasicResponseHandler;
 
 import android.app.Activity;
 import android.util.Log;
@@ -148,17 +148,18 @@ public class Upload {
 			final HttpResponse response = httpClient.execute(post);
 			Log.d("test", "end");
 			if(listener != null){
-				activity.runOnUiThread(new Runnable(){
-					@Override
-					public void run() {
-						try {
-							listener.onUploadEnd(getContent(response));
-						} catch (IOException e) {
-							e.printStackTrace();
-							listener.onUploadError();
+				try{
+					final String body = getContent(response);
+					activity.runOnUiThread(new Runnable(){
+						@Override
+						public void run() {
+							listener.onUploadEnd(body);
 						}
-					}
-				});
+					});
+				} catch (IOException e) {
+					e.printStackTrace();
+					listener.onUploadError();
+				}
 
 			}
 		} catch (IOException e) {
@@ -175,14 +176,17 @@ public class Upload {
 	} 
 	
 	public static String getContent(HttpResponse response) throws IOException {
-		BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+		ResponseHandler<String> handler = new BasicResponseHandler();
+		String body = handler.handleResponse(response);
+		return body;
+		/*BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 		String body = "";
 		String content = "";
 
 		while ((body = rd.readLine()) != null){
 			content += body + "\n";
 		}
-		return content.trim();
+		return content.trim();*/
 	}
 	public String getUrl() {
 		return url;
